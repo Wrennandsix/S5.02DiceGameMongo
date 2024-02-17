@@ -35,6 +35,10 @@ public class Usuario {
 
 	private ArrayList<Game> gamesHistory; 
 	
+	public Usuario() {
+		
+	}
+	
     public Usuario(String name) {
         this.name = name;
         this.averageRate = 0.0;

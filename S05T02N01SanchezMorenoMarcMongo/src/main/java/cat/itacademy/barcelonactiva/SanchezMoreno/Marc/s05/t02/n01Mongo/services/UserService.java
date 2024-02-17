@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.domain.Game;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.domain.Usuario;
+import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.dto.GameDTO;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.dto.UsuarioDTO;
 
 import java.util.List;
@@ -35,4 +36,6 @@ public interface UserService {
 	public void recalculateAverage(String id);
 	Usuario userDTOToUserAnonymus(UsuarioDTO userRegisterDTOAnonymus);
 	void addGame(Game game, String id);
+	List<GameDTO> gameListToGameListDTO(List<Game> games);
+	GameDTO gameToGameDTO(Game game);
 }	

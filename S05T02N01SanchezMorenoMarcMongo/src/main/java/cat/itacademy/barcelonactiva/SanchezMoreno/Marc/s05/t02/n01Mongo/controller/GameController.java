@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.domain.Game;
+import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.dto.GameDTO;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.dto.UsuarioDTO;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.services.UserService;
 
@@ -43,14 +43,15 @@ public class GameController {
     }
     
 	@PostMapping("/{id}/game")
-	public ResponseEntity<Game> play(@PathVariable("id") String id) {	
+	public ResponseEntity<GameDTO> play(@PathVariable("id") String id) {	
               
 		Game newGame = userService.playGame(id);
 		userService.saveGame(newGame);
 		userService.addGame(newGame,id);
 		userService.recalculateAverage(id);
+		GameDTO newGameDTO = userService.gameToGameDTO(newGame);
 		
-		return new ResponseEntity<>(newGame, HttpStatus.OK);
+		return new ResponseEntity<>(newGameDTO, HttpStatus.OK);
 	}
 
     @DeleteMapping("{id}/games")
@@ -63,19 +64,16 @@ public class GameController {
     public ResponseEntity<List<UsuarioDTO>> getAllAverageRate() {
 
     	List<UsuarioDTO> userDTOList = userService.getUsersAverageRate();
-
-    	{
-    		return new ResponseEntity<>(userDTOList, HttpStatus.OK);
-    	}
+    	return new ResponseEntity<>(userDTOList, HttpStatus.OK);
     }
     
     
     @GetMapping("/{id}/games")
-    public ResponseEntity<List<Game>> getAllUserGames(@PathVariable("id") String id){
+    public ResponseEntity<List<GameDTO>> getAllUserGames(@PathVariable("id") String id){
     	
         List<Game> allGames = userService.getUserGamesMongo(id);
-        
-        return new ResponseEntity<>(allGames, HttpStatus.OK);
+        List<GameDTO> allGamesDTO = userService.gameListToGameListDTO(allGames);
+        return new ResponseEntity<>(allGamesDTO, HttpStatus.OK);
     }
     
     @GetMapping("/ranking")

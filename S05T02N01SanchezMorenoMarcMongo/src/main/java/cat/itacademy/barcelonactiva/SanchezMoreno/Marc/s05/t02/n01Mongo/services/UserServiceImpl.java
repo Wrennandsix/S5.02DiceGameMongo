@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.domain.Game;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.domain.Usuario;
+import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.dto.GameDTO;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.dto.UsuarioDTO;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.exceptions.AlreadyHasNameException;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.exceptions.ExistingNameException;
@@ -159,6 +160,23 @@ public class UserServiceImpl implements UserService {
     public Usuario userDTOToUserAnonymus(UsuarioDTO userRegisterDTOAnonymus){
         return new Usuario("ANONYMOUS");
     }
+    
+	@Override
+	public GameDTO gameToGameDTO(Game game) {
+		return new GameDTO(game.getDice1(), game.getDice2());
+	}
+
+	@Override
+	public List<GameDTO> gameListToGameListDTO(List<Game> games) {
+		List<GameDTO> gamesDTO = new ArrayList<GameDTO>();
+
+		for (Game game : games) {
+			gamesDTO.add(gameToGameDTO(game));
+		}
+
+		return gamesDTO;
+
+	}
 	
 
 	@Override
