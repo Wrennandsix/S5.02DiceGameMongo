@@ -28,14 +28,14 @@ public interface UserService {
 	public Usuario userDTOToUser(UsuarioDTO userRegisterDTO);
 	public UsuarioDTO userToDTO(Usuario userRegister);
 	public Usuario getUser(String id);
-	public Game playGame(String id);
 	public void deleteAllUserGames(String id);
 	public List<UsuarioDTO> getUsersAverageRate();
 	public UsuarioDTO getLoser();
 	public UsuarioDTO getWiner();
 	public void recalculateAverage(String id);
-	Usuario userDTOToUserAnonymus(UsuarioDTO userRegisterDTOAnonymus);
-	void addGame(Game game, String id);
-	List<GameDTO> gameListToGameListDTO(List<Game> games);
-	GameDTO gameToGameDTO(Game game);
+	public Usuario userDTOToUserAnonymus(UsuarioDTO userRegisterDTOAnonymus);
+	public void addGame(Game game, String id);
+	public List<GameDTO> gameListToGameListDTO(List<Game> games);
+	public GameDTO gameToGameDTO(Game game);
+	public GameDTO playGame(String id);
 }	

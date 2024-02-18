@@ -211,18 +211,23 @@ public class UserServiceImpl implements UserService {
     }
 
 	@Override
-	public Game playGame(String id) {
+	public GameDTO playGame(String id) {
 
         Optional<Usuario> user = usersRepo.findById(id);
-        
         if(user.isEmpty()){
             throw new UserNotFoundException();
         }
- 
-		Game game = new Game();
 
-		return game;
+		Game game = new Game(id);
+		saveGame(game);
+		addGame(game,id);
+		recalculateAverage(id);	
+		GameDTO gameDTO = gameToGameDTO(game);
+		
+
+		return gameDTO;
 	}
+
 	@Override
 	public void addGame(Game game, String id) {
 		
@@ -257,7 +262,7 @@ public void recalculateAverage(String id) {
 	        
 	    }
 	   Usuario currentUser = getUser(id);
-	   currentUser.setAverageRate(0.0);
+	   currentUser.setAverageRate(null);
 	   currentUser.setGamesHistory(new ArrayList<Game>());
 	   usersRepo.save(currentUser);
 	}
@@ -328,5 +333,5 @@ public void recalculateAverage(String id) {
 		return games;
 	}
 
-}
 
+}

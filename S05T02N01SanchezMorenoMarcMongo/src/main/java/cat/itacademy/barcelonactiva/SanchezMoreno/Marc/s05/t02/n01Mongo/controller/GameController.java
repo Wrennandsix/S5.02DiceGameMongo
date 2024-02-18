@@ -42,15 +42,9 @@ public class GameController {
         return new ResponseEntity<>("Player updated successfully", HttpStatus.OK);
     }
     
-	@PostMapping("/{id}/game")
-	public ResponseEntity<GameDTO> play(@PathVariable("id") String id) {	
-              
-		Game newGame = userService.playGame(id);
-		userService.saveGame(newGame);
-		userService.addGame(newGame,id);
-		userService.recalculateAverage(id);
-		GameDTO newGameDTO = userService.gameToGameDTO(newGame);
-		
+    @PostMapping("/{id}/game")
+	public ResponseEntity<GameDTO> play(@PathVariable("id") String id) {
+		GameDTO newGameDTO = userService.playGame(id);
 		return new ResponseEntity<>(newGameDTO, HttpStatus.OK);
 	}
 
