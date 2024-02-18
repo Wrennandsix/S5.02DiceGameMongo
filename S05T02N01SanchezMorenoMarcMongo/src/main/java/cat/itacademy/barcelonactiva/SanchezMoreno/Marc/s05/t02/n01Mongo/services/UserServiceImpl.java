@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 	    List<Usuario> userList = usersRepo.findAll();
 	    
 	    Optional<Usuario> repeatedUser = userList.stream()
-	        .filter(u -> u.getName() != null && !u.getName().equalsIgnoreCase("Anonymus"))
+	        .filter(u -> u.getName() != null && !u.getName().equalsIgnoreCase("ANONYMOUS"))
 	        .filter(u -> u.getName() != null && u.getName().equalsIgnoreCase(name))
 	        .findFirst();
 
