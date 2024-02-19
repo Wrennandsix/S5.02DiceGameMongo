@@ -15,6 +15,7 @@ import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.exceptio
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.exceptions.GamesNotPlayedException;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.exceptions.NotExistingUsersException;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.exceptions.UserNotFoundException;
+import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.exceptions.YouAlreadyAnonymousException;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.repository.GameRepository;
 import cat.itacademy.barcelonactiva.SanchezMoreno.Marc.s05.t02.n01Mongo.repository.UserRepository;
 
@@ -183,21 +184,31 @@ public class UserServiceImpl implements UserService {
 	public void updateUser(String id, UsuarioDTO userDTO) {
 
 		Usuario user = getUser(id);
-		
-	    if(userDTO.getName().equalsIgnoreCase(user.getName())) {
-        	throw new AlreadyHasNameException();
-        }
 
-		Usuario existingUser = usersRepo.findByName(userDTO.getName());
+		if (userDTO.getName() == null || userDTO.getName().trim().isEmpty()) {
+			if ("ANONYMOUS".equalsIgnoreCase(user.getName())) {
+				throw new YouAlreadyAnonymousException();
+			}
+			user.setName("ANONYMOUS");
+			usersRepo.save(user);
+			return;
+		}
 
-		if (existingUser != null) {
-			if (existingUser.getId() != user.getId()) {
+		if (userDTO.getName().equalsIgnoreCase(user.getName())) {
+			throw new AlreadyHasNameException();
+		}
+
+		Optional<Usuario> existingUser = Optional.ofNullable(usersRepo.findByName(userDTO.getName()));
+
+		if (existingUser != null && existingUser.isPresent()) {
+			if (existingUser.get().getId() != user.getId()) {
 				throw new ExistingNameException();
 			}
 		}
 		user.setName(userDTO.getName());
 		usersRepo.save(user);
 	}
+
 	
     @Override
     public Usuario getUser(String id) {
@@ -311,27 +322,24 @@ public void recalculateAverage(String id) {
 
 	@Override
 	public List<Game> getUserGamesMongo(String id) {
+	    List<Usuario> users = usersRepo.findAll();
 
-		List<Usuario> users = usersRepo.findAll();
+	    boolean userFinded = users.stream()
+	                              .filter(user -> user.getId().equals(id))
+	                              .findFirst()
+	                              .isPresent();
 
-		List<Game> games = new ArrayList<Game>();
-        boolean userFinded =false;
-        
-		for (Usuario user : users) {
-			if (user.getId().equals(id)) {
-				userFinded = true;
-				games.addAll(user.getGamesHistory());
-			}
-		}
-		if(userFinded == false) {
-			throw new UserNotFoundException();
-		}
-		
-		if (games.isEmpty()) {
-			throw new GamesNotPlayedException();
-		}
-		return games;
+	    if (!userFinded) {
+	        throw new UserNotFoundException();
+	    }
+
+	    List<Game> games = users.stream()
+	                            .filter(user -> user.getId().equals(id))
+	                            .findFirst()
+	                            .map(Usuario::getGamesHistory)
+	                            .orElseThrow(GamesNotPlayedException::new);
+
+	    return new ArrayList<>(games);
 	}
-
 
 }
